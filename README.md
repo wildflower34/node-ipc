@@ -11,18 +11,13 @@ A great solution for complex multiprocess **Neural Networking** in Node.JS
 npm info :  [See npm trends and stats for node-ipc](http://npm-stat.com/charts.html?package=node-ipc&author=&from=&to=)   
 [![NPM](https://nodei.co/npm/node-ipc.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/node-ipc/)
 [![Package Quality](http://npm.packagequality.com/badge/node-ipc.png)](http://packagequality.com/#?package=node-ipc)  
-![node-ipc npm version](https://img.shields.io/npm/v/node-ipc.svg) ![supported node version for node-ipc](https://img.shields.io/node/v/node-ipc.svg) ![total npm downloads for node-ipc](https://img.shields.io/npm/dt/node-ipc.svg) ![monthly npm downloads for node-ipc](https://img.shields.io/npm/dm/node-ipc.svg) ![npm licence for node-ipc](https://img.shields.io/npm/l/node-ipc.svg)
-
-[![RIAEvangelist](https://avatars3.githubusercontent.com/u/369041?v=3&s=100)](https://github.com/RIAEvangelist)
+![node-ipc npm version](https://img.shields.io/npm/v/node-ipc.svg) ![supported node version for node-ipc](https://img.shields.io/node/v/node-ipc.svg) ![total npm downloads for node-ipc](https://img.shields.io/npm/dt/node-ipc.svg) ![monthly npm downloads for node-ipc](https://img.shields.io/npm/dm/node-ipc.svg) ![npm licence for node-ipc](https://img.shields.io/npm/l/node-ipc.svg) 
 
 GitHub info :  
 ![node-ipc GitHub Release](https://img.shields.io/github/release/RIAEvangelist/node-ipc.svg) ![GitHub license node-ipc license](https://img.shields.io/github/license/RIAEvangelist/node-ipc.svg) ![open issues for node-ipc on GitHub](https://img.shields.io/github/issues/RIAEvangelist/node-ipc.svg)
 
-Codacy info :  
-[![Codacy Badge](https://api.codacy.com/project/badge/grade/8e0294dff55f4ac1985c07b16f39d0a9)](https://www.codacy.com/app/RIAEvangelist/node-ipc) [![Codacy Badge](https://api.codacy.com/project/badge/coverage/8e0294dff55f4ac1985c07b16f39d0a9)](https://www.codacy.com/app/RIAEvangelist/node-ipc)
-
-Build Info :  
-Mac & Linux : [![Build Status](https://travis-ci.org/RIAEvangelist/node-ipc.svg?branch=master)](https://travis-ci.org/RIAEvangelist/node-ipc) Windows : [![node-ipc windows build status](https://ci.appveyor.com/api/projects/status/github/riaevangelist/node-ipc?branch=master&svg=true)](https://ci.appveyor.com/project/RIAEvangelist/node-ipc/history)
+Code Coverage Info :  
+![lcov node-ipc](/blob/main/coverage/lcov.svg)
 
 Package details websites :
 * [GitHub.io site](http://riaevangelist.github.io/node-ipc/ "node-ipc documentation"). A prettier version of this site.
@@ -56,7 +51,7 @@ You may want to install jasmine and istanbul globally with ` sudo npm install -g
 4. [IPC Events](#ipc-events)
 5. [Multiple IPC instances](#multiple-ipc-instances)
 6. [Basic Examples](#basic-examples)
-    1. [Server for Unix||Windows Sockets & TCP Sockets](#server-for-unix-sockets--tcp-sockets)
+    1. [Server for Unix||Windows Sockets & TCP Sockets](#server-for-unix-sockets-windows-sockets--tcp-sockets)
     2. [Client for Unix||Windows Sockets & TCP Sockets](#client-for-unix-sockets--tcp-sockets)
     4. [Server & Client for UDP Sockets](#server--client-for-udp-sockets)
     5. [Raw Buffers, Real Time and / or Binary Sockets](#raw-buffer-or-binary-sockets)
@@ -96,6 +91,8 @@ Set these variables in the `ipc.config` scope to overwrite or set default values
         id              : os.hostname(),
         networkHost     : 'localhost', //should resolve to 127.0.0.1 or ::1 see the table below related to this
         networkPort     : 8000,
+        readableAll     : false,
+        writableAll     : false,
         encoding        : 'utf8',
         rawBuffer       : false,
         delimiter       : '\f',
@@ -127,6 +124,8 @@ Set these variables in the `ipc.config` scope to overwrite or set default values
 | id       | the id of this socket or service |
 | networkHost| the local or remote host on which TCP, TLS or UDP Sockets should connect |
 | networkPort| the default port on which TCP, TLS, or UDP sockets should connect |
+| readableAll| makes the pipe readable for all users including windows services |
+| writableAll| makes the pipe writable for all users including windows services |
 | encoding | the default encoding for data sent on sockets. Mostly used if rawBuffer is set to true. Valid values are : ` ascii` ` utf8 ` ` utf16le` ` ucs2` ` base64` ` hex ` . |
 | rawBuffer| if true, data will be sent and received as a raw node ` Buffer ` __NOT__ an ` Object ` as JSON. This is great for Binary or hex IPC, and communicating with other processes in languages like C and C++  |
 | delimiter| the delimiter at the end of each data packet. |
@@ -480,7 +479,6 @@ or specifying everything UDP
 |destroy||triggered when socket has been totally destroyed, no further auto retries will happen and all references are gone.|
 |data|buffer|triggered when ipc.config.rawBuffer is true and a message is received.|
 |***your event type***|***your event data***|triggered when a JSON message is received. The event name will be the type string from your message and the param will be the data object from your message eg : ` { type:'myEvent',data:{a:1}} ` |
-||||
 
 ### Multiple IPC Instances
 
@@ -488,14 +486,14 @@ Sometimes you might need explicit and independent instances of node-ipc. Just fo
 
 ```javascript
 
-    const RawIPC=require('node-ipc').IPC;
+    const RawIPC=from 'node-ipc').IPC;
     const ipc=new RawIPC;
     const someOtherExplicitIPC=new RawIPC;
 
 
     //OR
 
-    const ipc=require('node-ipc');
+    const ipc=from 'node-ipc');
     const someOtherExplicitIPC=new ipc.IPC;
 
 
@@ -523,7 +521,7 @@ The server is the process keeping a socket for IPC open. Multiple sockets can co
 
 ```javascript
 
-    var ipc=require('node-ipc');
+    var ipc=from 'node-ipc');
 
     ipc.config.id   = 'world';
     ipc.config.retry= 1500;
@@ -560,7 +558,7 @@ The client connects to the servers socket for Inter Process Communication. The s
 
 ```javascript
 
-    var ipc=require('node-ipc');
+    var ipc=from 'node-ipc');
 
     ipc.config.id   = 'hello';
     ipc.config.retry= 1500;
@@ -606,7 +604,7 @@ This is the most basic example which will work for both local and remote UDP Soc
 
 ```javascript
 
-    var ipc=require('../../../node-ipc');
+    var ipc=from '../../../node-ipc');
 
     ipc.config.id   = 'world';
     ipc.config.retry= 1500;
@@ -801,10 +799,10 @@ Writing explicit buffers, int types, doubles, floats etc. as well as big endian 
 
 ```javascript
 
-    const fs = require('fs');
-    const ipc=require('../../../node-ipc');
-    const cpuCount = require('os').cpus().length;
-    const cluster = require('cluster');
+    const fs = from 'fs');
+    const ipc=from '../../../node-ipc');
+    const cpuCount = from 'os').cpus().length;
+    const cluster = from 'cluster');
     const socketPath = '/tmp/ipc.sock';
 
     ipc.config.unlink = false;
@@ -840,8 +838,8 @@ Writing explicit buffers, int types, doubles, floats etc. as well as big endian 
 
 ```javascript
 
-    const fs = require('fs');
-    const ipc = require('../../node-ipc');
+    const fs = from 'fs');
+    const ipc = from '../../node-ipc');
 
     const socketPath = '/tmp/ipc.sock';
 
